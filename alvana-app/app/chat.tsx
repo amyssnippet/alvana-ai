@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity } from "react-native"
+import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, ImageBackground, Image } from "react-native"
 
 type Message = {
   id: string
@@ -39,7 +39,15 @@ export default function ChatScreen() {
   )
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../assets/images/alvana1.jpeg")}
+      style={styles.container}
+      imageStyle={styles.backgroundImage}
+    >
+      <View style={styles.header}>
+        <Image style={styles.logo} source={require("../assets/images/nobg.jpeg")} resizeMode="contain" />
+        <Text style={styles.headText}>A1vana</Text>
+      </View>
       <FlatList
         data={messages}
         renderItem={renderMessage}
@@ -57,14 +65,32 @@ export default function ChatScreen() {
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+  },
+  backgroundImage: {
+    resizeMode: "cover",
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row", // This makes the logo and text appear side by side
+    alignItems: "center", // Vertically center the items
+    padding: 10,
+  },
+  logo: {
+    height: 50, // Adjust height for the logo
+    width: 50,  // Adjust width for the logo
+    marginRight: 10, // Space between the logo and text
+  },
+  headText: {
+    color: "#fff",
+    fontSize: 24, // Adjust font size as needed
+    fontWeight: "bold",
   },
   messageList: {
     flex: 1,
