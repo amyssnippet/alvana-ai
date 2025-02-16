@@ -1,12 +1,25 @@
-const express = require("express");
+import axios from "axios";
 
-const app = express();
+export default async function handler(req, res) {
+  try {
+    // Replace "YOUR_FILE_ID" with your actual Google Drive File ID
+    const GOOGLE_DRIVE_URL = "https://drive.google.com/uc?export=download&id=1W0tXFfxm67KMu4S6ELe6kks89nbhwoXg";
 
-// Serve static files from public/
-app.use(express.static("public"));
+    // Fetch the APK file from Google Drive
+    const response = await axios({
+      url: GOOGLE_DRIVE_URL,
+      method: "GET",
+      responseType: "stream",
+    });
 
-app.get("/", (req, res) => {
-  res.redirect("/alvana.apk"); // Redirects to direct download
-});
+    // Set headers to force file download
+    res.setHeader("Content-Disposition", 'attachment; filename="alvana.apk"');
+    res.setHeader("Content-Type", "application/vnd.android.package-archive");
 
-module.exports = app;
+    // Pipe the file to the response
+    response.data.pipe(res);
+  } catch (error) {
+    console.error("Download error:", error);
+    res.status(500).json({ error: "Failed to download APK" });
+  }
+}
