@@ -4,7 +4,7 @@
     "slug": "alvana-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/nobg.jpeg",
+    "icon": "./assets/images/alvana.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
