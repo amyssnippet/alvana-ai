@@ -4,7 +4,7 @@
     "slug": "alvana-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/alvana.png",
+    "icon": "./assets/images/nobg.jpeg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -21,7 +21,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/alvana.png"
+      "favicon": "./assets/images/nobg.jpeg"
     },
     "plugins": [
       "expo-router",

@@ -13,7 +13,7 @@ export default function LoadingScreen() {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/images/react-logo.png")} style={styles.logo} resizeMode="contain" />
+      <Image source={require("../assets/images/alvana.png")} style={styles.logo} resizeMode="contain" />
     </View>
   )
 }
