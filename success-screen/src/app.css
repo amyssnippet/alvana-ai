@@ -1,0 +1,88 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #e6f7e6, #ffffff);
+  padding: 1rem;
+}
+
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  width: 100%;
+  max-width: 24rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.icon-background {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background-color: #e6f7e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-icon {
+  width: 3rem;
+  height: 3rem;
+  color: #22c55e;
+  stroke-width: 4;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+}
+
+.progress-bar-background {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.625rem;
+}
+
+.progress-bar {
+  background-color: #22c55e;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.description {
+  color: #4b5563;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .icon-background {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .check-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+

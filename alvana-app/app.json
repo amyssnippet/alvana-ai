@@ -21,7 +21,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/nobg.jpeg"
+      "favicon": "./assets/images/alvana.png"
     },
     "plugins": [
       "expo-router",
@@ -45,6 +45,7 @@
       "eas": {
         "projectId": "fbefbf60-dd28-484f-8765-3637049d27fa"
       }
-    }
+    },
+    "owner": "amol_6125"
   }
 }

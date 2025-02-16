@@ -1,20 +1,12 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
 
 const app = express();
-const PORT = process.env.PORT || 4000;
-const APK_FILE = './alvana.apk';
 
-app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, APK_FILE);
-    res.download(filePath, APK_FILE, (err) => {
-        if (err) {
-            console.error('Error sending file:', err);
-            res.status(500).send('Error downloading the file');
-        }
-    });
+// Serve static files from public/
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.redirect("/alvana.apk"); // Redirects to direct download
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+module.exports = app;
