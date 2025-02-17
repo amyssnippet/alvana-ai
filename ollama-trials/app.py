@@ -1,57 +1,73 @@
-from flask import Flask, request, jsonify
-import requests
-from bs4 import BeautifulSoup
-import wikipediaapi
-from datetime import datetime
+import ollama
+import chromadb
 
-app = Flask(__name__)
+# Initialize the ChromaDB client
+client = chromadb.PersistentClient(path="./chroma_db")
 
-# Ollama Alvana API Endpoint
-OLLAMA_URL = "https://vigilant-halibut-wwqjvgp5p7rfgrqv-11434.app.github.dev/api/generate"
+# Create a collection
+collection = client.get_or_create_collection(name="knowledge_base")
 
-def query_alvana(prompt):
-    """Query Alvana AI model running on Ollama"""
-    data = {"model": "alvana", "prompt": prompt}
-    response = requests.post(OLLAMA_URL, json=data)
-    return response.json().get("response", "Error querying Alvana AI") if response.status_code == 200 else "Alvana AI request failed."
+# Add knowledge from your data.txt
+data = [
+  {
+    "question": "What is Atharva College of Engineering?",
+    "answer": "Atharva College of Engineering was established in 1999 by The Atharva Educational Trust. It is located in Malad, Mumbai, and is affiliated with Mumbai University. The college offers courses in Computers, Information Technology, Electronics & Telecommunication, and Electronics Engineering."
+  },
+  {
+    "question": "Who founded Atharva College of Engineering?",
+    "answer": "Atharva College of Engineering was founded by The Atharva Educational Trust, which was established to provide high-quality technical education in Maharashtra."
+  },
+  {
+    "question": "What is the vision of Atharva College of Engineering?",
+    "answer": "The college aims to produce well-disciplined, practical-oriented, and highly knowledgeable engineers who contribute to society and the nation."
+  },
+  {
+    "question": "Who is Sunil Dattatray Rane?",
+    "answer": "Sunil Dattatray Rane is an Indian politician and a member of the Maharashtra Legislative Assembly from the Borivali constituency. He is also the founder of Atharva Foundation and has been actively involved in educational initiatives."
+  },
+  {
+    "question": "What courses are offered at Atharva College of Engineering?",
+    "answer": "The college offers programs in Applied Mathematics, Applied Physics, Applied Chemistry, Engineering Mechanics, Professional and Communication Ethics, Basic Electrical & Electronics Engineering, C Programming, Python Programming, and various core engineering disciplines."
+  },
+  {
+    "question": "Who is the principal of Atharva College of Engineering?",
+    "answer": "Dr. Ramesh Kulkarni is the principal of Atharva College of Engineering."
+  },
+  {
+    "question": "What is the Atharva Foundation?",
+    "answer": "The Atharva Foundation was founded in 2016 by Sunil Dattatray Rane to provide quality education and support underprivileged sections of society."
+  },
+  {
+    "question": "Who are the notable faculty members at Atharva College of Engineering?",
+    "answer": "Some of the faculty members include Dr. Ritu Sharma (Head of Humanities & Applied Sciences), Dr. Bhushan Sonawane (Chemistry, 20 years experience), Dr. Priyanka Badani (Chemistry, MH-SET, 13 years experience), Dr. Balaji Shinde (English Literature, 18 years experience), and many more."
+  },
+  {
+    "question": "What certifications does Atharva College of Engineering hold?",
+    "answer": "The college is ISO 9001:2015, 21001:2018, and 14001:2015 certified."
+  },
+  {
+    "question": "Where is Atharva College of Engineering located?",
+    "answer": "Atharva College of Engineering is located in Malad, Mumbai, Maharashtra, India."
+  }
+]
 
-def get_wikipedia_summary(topic):
-    """Fetch Wikipedia summary for a given topic"""
-    wiki_wiki = wikipediaapi.Wikipedia("en")
-    page = wiki_wiki.page(topic)
-    return page.summary if page.exists() else "Wikipedia page not found."
 
-def web_crawl(url):
-    """Extract the title of a webpage"""
-    try:
-        response = requests.get(url, timeout=5)
-        soup = BeautifulSoup(response.text, "html.parser")
-        return soup.title.string if soup.title else "No title found."
-    except Exception as e:
-        return f"Web crawling error: {str(e)}"
+for entry in data:
+    collection.add(ids=[entry["id"]], documents=[entry["content"]])
 
-@app.route("/query", methods=["POST"])
-def query():
-    """Single request querying AI, Wikipedia, Web Crawling, and Date"""
-    data = request.json
-    query = data.get("query", "")
+# Function to search the database and generate responses
+def ask_alvana(question):
+    results = collection.query(query_texts=[question], n_results=3)
+    
+    retrieved_info = " ".join([doc for doc in results["documents"][0]])
 
-    # Parallel execution (all at once)
-    ai_response = query_alvana(query)
-    wiki_response = get_wikipedia_summary(query)
-    crawl_response = web_crawl(query)
-    date_response = str(datetime.today().date())
+    # Pass the retrieved info to the model
+    response = ollama.chat(model="alvana-ai", messages=[
+        {"role": "system", "content": "Use the retrieved information to answer the question."},
+        {"role": "user", "content": f"Question: {question}\n\nRelevant Info: {retrieved_info}"}
+    ])
+    
+    return response['message']
 
-    # Unified response
-    response = {
-        "query": query,
-        "alvana_ai": ai_response,
-        "wikipedia_summary": wiki_response,
-        "web_crawl_title": crawl_response,
-        "today_date": date_response
-    }
-
-    return jsonify(response)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8888, debug=True)
+# Example usage
+print(ask_alvana("Who is the principal of Atharva College?"))
